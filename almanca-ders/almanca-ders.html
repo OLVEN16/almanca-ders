@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Almanca Öğrenme Uygulaması</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        
+        h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        button.active {
+            background-color: #2c3e50;
+        }
+        
+        button.danger {
+            background-color: #e74c3c;
+        }
+        
+        button.danger:hover {
+            background-color: #c0392b;
+        }
+        
+        button.success {
+            background-color: #27ae60;
+        }
+        
+        button.success:hover {
+            background-color: #219653;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .question {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            line-height: 1.4;
+        }
+        
+        .translation {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 15px;
+        }
+        
+        .translation.show {
+            display: block;
+        }
+        
+        .answer {
+            background-color: #e8f5e9;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 16px;
+            color: #27ae60;
+        }
+        
+        .answer.show {
+            display: block;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .option {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .option:hover {
+            background-color: #f1f8ff;
+        }
+        
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        .user-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #3498db;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .result {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        
+        .study-item {
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .study-question {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+        
+        .study-answer {
+            color: #27ae60;
+            font-size: 14px;
+        }
+        
+        .study-translation {
+            color: #7f8c8d;
+            font-style: italic;
+            font-size: 14px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .toggle-translation, .toggle-answer {
+            background-color: #95a5a6;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        
+        .toggle-translation:hover, .toggle-answer:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        
+        .navigation button {
+            flex: 1;
+        }
+        
+        .add-question-form {
+            margin-top: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        
+        .info-text {
+            color: #7f8c8d;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .actions button {
+            flex: 1;
+            min-width: 140px;
+        }
+        
+        /* Mobil için medya sorguları */
+        @media (max-width: 480px) {
+            .container {
+                padding: 5px;
+            }
+            
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 8px 12px;
+                font-size: 13px;
+                min-width: 100px;
+            }
+            
+            .mode-selector {
+                gap: 5px;
+            }
+            
+            .question {
+                font-size: 16px;
+            }
+            
+            .translation, .answer {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Almanca Öğrenme Uygulaması</h1>
+            <p>Almanca sorularla pratik yapın ve kelime dağarcığınızı geliştirin</p>
+        </header>
+        
+        <div class="mode-selector">
+            <button id="studyModeBtn">Çalışma</button>
+            <button id="repeatModeBtn">Tekrar</button>
+            <button id="examModeBtn">Sınav</button>
+            <button id="gameModeBtn">Oyun</button>
+            <button id="addQuestionBtn">Soru Ekle</button>
+        </div>
+        
+        <!-- Çalışma Modu -->
+        <div id="studyMode" class="card">
+            <h2>Çalışma Kağıdı</h2>
+            <div id="studyList">
+                <!-- Çalışma soruları buraya dinamik olarak eklenecek -->
+            </div>
+        </div>
+        
+        <!-- Tekrar Modu -->
+        <div id="repeatMode" class="card hidden">
+            <div class="progress">
+                <span id="repeatCurrentQuestion">1/16</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="repeatProgressFill"></div>
+            </div>
+            
+            <div class="question" id="repeatQuestion"></div>
+            
+            <button class="toggle-translation" id="repeatToggleTranslation">Türkçe Anlamını Göster</button>
+            <div class="translation" id="repeatTranslation"></div>
+            
+            <button class="toggle-answer" id="repeatToggleAnswer">Cevabı Göster</button>
+            <div class="answer" id="repeatAnswer"></div>
+            
+            <div class="navigation">
+                <button id="prevRepeatQuestion" class="hidden">Önceki Soru</button>
+                <button id="nextRepeatQuestion">Sonraki Soru</button>
+            </div>
+        </div>
+        
+        <!-- Sınav Modu -->
+        <div id="examMode" class="card hidden">
+            <div class="progress">
+                <span id="currentQuestion">1/16</span>
+                <span id="score">Skor: 0</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <div class="question" id="examQuestion"></div>
+            
+            <button class="toggle-translation" id="examToggleTranslation">Türkçe Anlamını Göster</button>
+            <div class="translation" id="examTranslation"></div>
+            
+            <div class="options" id="examOptions">
+                <!-- Seçenekler buraya dinamik olarak eklenecek -->
+            </div>
+            
+            <div class="navigation">
+                <button id="nextQuestion" class="hidden">Sonraki Soru</button>
+            </div>
+            
+            <div class="result hidden" id="examResult"></div>
+        </div>
+        
+        <!-- Oyun Modu -->
+        <div id="gameMode" class="card hidden">
+            <div class="progress">
+                <span id="gameCurrentQuestion">1/16</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="gameProgressFill"></div>
+            </div>
+            
+            <div class="question" id="gameQuestion"></div>
+            
+            <button class="toggle-translation" id="gameToggleTranslation">Türkçe Anlamını Göster</button>
+            <div class="translation" id="gameTranslation"></div>
+            
+            <input type="text" class="user-input" id="userAnswer" placeholder="Cevabınızı buraya yazın...">
+            
+            <div class="navigation">
+                <button id="checkAnswer">Cevabı Kontrol Et</button>
+                <button id="nextGameQuestion" class="hidden">Sonraki Soru</button>
+            </div>
+            
+            <div class="result hidden" id="gameResult"></div>
+        </div>
+        
+        <!-- Soru Ekleme Formu -->
+        <div id="addQuestionMode" class="card hidden">
+            <h2>Yeni Soru Ekle</h2>
+            <div class="add-question-form">
+                <div class="form-group">
+                    <label for="bulkQuestions">Toplu Soru Ekleme:</label>
+                    <textarea id="bulkQuestions" placeholder="Soruları aşağıdaki formatta ekleyin:
+
+1-Wie viel kosten ein Kilo Tomaten ? Ein Kilo Tomaten kosten  .............
+2-Was isst du zum Frühstück? Ich esse zum Frühstück eine Scheibe Brot,Käse ,Oliven...
+3-Was isst du zum Abendessen? Ich esse zum Abendessen Suppe und Brot mit Käse.."></textarea>
+                    <div class="info-text">Her soruyu numara-soru? cevap formatında ekleyin. Sistem otomatik olarak ayıracaktır.</div>
+                </div>
+                
+                <div class="actions">
+                    <button id="parseQuestions">Soruları Ayrıştır ve Ekle</button>
+                    <button id="clearQuestions" class="danger">Tüm Soruları Temizle</button>
+                </div>
+                
+                <div id="saveMessage" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Varsayılan sorular
+        let questions = [
+            {
+                question: "Wie viel kosten ein Kilo Tomaten?",
+                answer: "Ein Kilo Tomaten kosten .............",
+                translation: "Bir kilo domates ne kadar? Bir kilo domates ............. kadar."
+            },
+            {
+                question: "Was isst du zum Frühstück?",
+                answer: "Ich esse zum Frühstück eine Scheibe Brot, Käse, Oliven...",
+                translation: "Kahvaltıda ne yersin? Kahvaltıda bir dilim ekmek, peynir, zeytin yerim..."
+            },
+            {
+                question: "Was isst du zum Abendessen?",
+                answer: "Ich esse zum Abendessen Suppe und Brot mit Käse..",
+                translation: "Akşam yemeğinde ne yersin? Akşam yemeğinde çorba ve peynirli ekmek yerim."
+            },
+            {
+                question: "Was ist das?",
+                answer: "Das ist ein Apfel /eine Birne...",
+                translation: "Bu nedir? Bu bir elma / bir armut..."
+            },
+            {
+                question: "Was isst du gerne?",
+                answer: "Ich esse gerne Gemüse /Obst/Pizza/Fisch .......",
+                translation: "Ne yemeyi seversin? Sebze / meyve / pizza / balık yemeyi severim."
+            },
+            {
+                question: "Was trinkst du gerne?",
+                answer: "Ich trinke gerne Orangensaft.....",
+                translation: "Ne içmeyi seversin? Portakal suyu içmeyi severim."
+            },
+            {
+                question: "Was ist dein Lieblingsessen?",
+                answer: "Mein Lieblingsessen ist Fleisch mit Kartoffel.....",
+                translation: "En sevdiğin yemek nedir? En sevdiğim yemek patatesli ettir."
+            },
+            {
+                question: "Was ist dein Lieblingsgetränk?",
+                answer: "Mein Lieblingsgetränk ist Apfelsaft /Orangensaft/Tee/Kaffee",
+                translation: "En sevdiğin içecek nedir? En sevdiğim içecek elma suyu / portakal suyu / çay / kahvedir."
+            },
+            {
+                question: "Was isst du zum Mittagessen?",
+                answer: "Ich esse zum Mittagessen Fleisch mit Gemüse.",
+                translation: "Öğle yemeğinde ne yersin? Öğle yemeğinde etli sebze yerim."
+            },
+            {
+                question: "Was magst du essen?",
+                answer: "Ich mag Spaghetti essen.",
+                translation: "Ne yemeyi seversin? Spaghetti yemeyi severim."
+            },
+            {
+                question: "Isst du gerne Fleisch mit Gemüse?",
+                answer: "Ja, ich esse gerne Fleisch mit Gemüse",
+                translation: "Etli sebze yemeyi sever misin? Evet, etli sebze yemeyi severim"
+            },
+            {
+                question: "Was magst du nicht?",
+                answer: "Ich mag Tee /Obst.......nicht.",
+                translation: "Neyi sevmezsin? Çay / meyve sevmem."
+            },
+            {
+                question: "Was brauchst du?",
+                answer: "Ich brauche ein Kilo Orangen,10 Stück Eier.",
+                translation: "Neye ihtiyacın var? Bir kilo portakala, 10 adet yumurtaya ihtiyacım var."
+            },
+            {
+                question: "Was magst du?",
+                answer: "Ich mag Obst und Gemüse /Reis/Salat/Fisch.",
+                translation: "Neyi seversin? Meyve ve sebzeleri / pirinç / salata / balığı severim."
+            },
+            {
+                question: "Isst du gerne Spinat?",
+                answer: "Ja,ich esse gerne Spinat",
+                translation: "Ispanak yemeyi sever misin? Evet, ıspanak yemeyi severim"
+            },
+            {
+                question: "Was trinkst du zum Frühstück?",
+                answer: "Ich trinke zum Frühstück eine Tasse Kaffee /ein Glas Milch",
+                translation: "Kahvaltıda ne içersin? Kahvaltıda bir fincan kahve / bir bardak süt içerim."
+            }
+        ];
+
+        // UI Elementleri
+        const studyModeBtn = document.getElementById('studyModeBtn');
+        const repeatModeBtn = document.getElementById('repeatModeBtn');
+        const examModeBtn = document.getElementById('examModeBtn');
+        const gameModeBtn = document.getElementById('gameModeBtn');
+        const addQuestionBtn = document.getElementById('addQuestionBtn');
+        
+        const studyMode = document.getElementById('studyMode');
+        const repeatMode = document.getElementById('repeatMode');
+        const examMode = document.getElementById('examMode');
+        const gameMode = document.getElementById('gameMode');
+        const addQuestionMode = document.getElementById('addQuestionMode');
+        
+        const studyList = document.getElementById('studyList');
+        
+        // Tekrar modu elementleri
+        const repeatQuestion = document.getElementById('repeatQuestion');
+        const repeatTranslation = document.getElementById('repeatTranslation');
+        const repeatAnswer = document.getElementById('repeatAnswer');
+        const repeatToggleTranslation = document.getElementById('repeatToggleTranslation');
+        const repeatToggleAnswer = document.getElementById('repeatToggleAnswer');
+        const prevRepeatQuestion = document.getElementById('prevRepeatQuestion');
+        const nextRepeatQuestion = document.getElementById('nextRepeatQuestion');
+        const repeatCurrentQuestion = document.getElementById('repeatCurrentQuestion');
+        const repeatProgressFill = document.getElementById('repeatProgressFill');
+        
+        // Sınav modu elementleri
+        const examQuestion = document.getElementById('examQuestion');
+        const examTranslation = document.getElementById('examTranslation');
+        const examOptions = document.getElementById('examOptions');
+        const examToggleTranslation = document.getElementById('examToggleTranslation');
+        const nextQuestion = document.getElementById('nextQuestion');
+        const currentQuestion = document.getElementById('currentQuestion');
+        const score = document.getElementById('score');
+        const progressFill = document.getElementById('progressFill');
+        const examResult = document.getElementById('examResult');
+        
+        // Oyun modu elementleri
+        const gameQuestion = document.getElementById('gameQuestion');
+        const gameTranslation = document.getElementById('gameTranslation');
+        const gameToggleTranslation = document.getElementById('gameToggleTranslation');
+        const userAnswer = document.getElementById('userAnswer');
+        const checkAnswer = document.getElementById('checkAnswer');
+        const nextGameQuestion = document.getElementById('nextGameQuestion');
+        const gameCurrentQuestion = document.getElementById('gameCurrentQuestion');
+        const gameProgressFill = document.getElementById('gameProgressFill');
+        const gameResult = document.getElementById('gameResult');
+        
+        // Soru ekleme elementleri
+        const bulkQuestions = document.getElementById('bulkQuestions');
+        const parseQuestions = document.getElementById('parseQuestions');
+        const clearQuestions = document.getElementById('clearQuestions');
+        const saveMessage = document.getElementById('saveMessage');
+        
+        // Değişkenler
+        let currentMode = 'study';
+        let repeatQuestions = [];
+        let currentRepeatIndex = 0;
+        let examQuestions = [];
+        let currentExamIndex = 0;
+        let examScore = 0;
+        let gameQuestions = [];
+        let currentGameIndex = 0;
+        
+        // Mod değiştirme
+        studyModeBtn.addEventListener('click', () => switchMode('study'));
+        repeatModeBtn.addEventListener('click', () => switchMode('repeat'));
+        examModeBtn.addEventListener('click', () => switchMode('exam'));
+        gameModeBtn.addEventListener('click', () => switchMode('game'));
+        addQuestionBtn.addEventListener('click', () => switchMode('addQuestion'));
+        
+        function switchMode(mode) {
+            // Tüm modları gizle
+            studyMode.classList.add('hidden');
+            repeatMode.classList.add('hidden');
+            examMode.classList.add('hidden');
+            gameMode.classList.add('hidden');
+            addQuestionMode.classList.add('hidden');
+            
+            // Aktif butonları sıfırla
+            studyModeBtn.classList.remove('active');
+            repeatModeBtn.classList.remove('active');
+            examModeBtn.classList.remove('active');
+            gameModeBtn.classList.remove('active');
+            addQuestionBtn.classList.remove('active');
+            
+            // Seçilen modu göster
+            currentMode = mode;
+            switch(mode) {
+                case 'study':
+                    studyMode.classList.remove('hidden');
+                    studyModeBtn.classList.add('active');
+                    loadStudyMode();
+                    break;
+                case 'repeat':
+                    repeatMode.classList.remove('hidden');
+                    repeatModeBtn.classList.add('active');
+                    startRepeat();
+                    break;
+                case 'exam':
+                    examMode.classList.remove('hidden');
+                    examModeBtn.classList.add('active');
+                    startExam();
+                    break;
+                case 'game':
+                    gameMode.classList.remove('hidden');
+                    gameModeBtn.classList.add('active');
+                    startGame();
+                    break;
+                case 'addQuestion':
+                    addQuestionMode.classList.remove('hidden');
+                    addQuestionBtn.classList.add('active');
+                    break;
+            }
+        }
+        
+        // Çalışma modunu yükle
+        function loadStudyMode() {
+            studyList.innerHTML = '';
+            questions.forEach((q, index) => {
+                const studyItem = document.createElement('div');
+                studyItem.className = 'study-item';
+                studyItem.innerHTML = `
+                    <div class="study-question">${index + 1}. ${q.question}</div>
+                    <div class="study-answer">${q.answer}</div>
+                    <div class="study-translation">${q.translation}</div>
+                `;
+                studyList.appendChild(studyItem);
+            });
+        }
+        
+        // Tekrar modunu başlat
+        function startRepeat() {
+            // Soruları karıştır
+            repeatQuestions = [...questions].sort(() => Math.random() - 0.5);
+            
+            // Kullanıcı 16'dan az soru eklediyse, tüm soruları kullan
+            const questionCount = Math.min(repeatQuestions.length, 16);
+            repeatQuestions = repeatQuestions.slice(0, questionCount);
+            
+            currentRepeatIndex = 0;
+            repeatCurrentQuestion.textContent = `1/${repeatQuestions.length}`;
+            repeatProgressFill.style.width = '0%';
+            prevRepeatQuestion.classList.add('hidden');
+            
+            loadRepeatQuestion();
+        }
+        
+        function loadRepeatQuestion() {
+            if (currentRepeatIndex >= repeatQuestions.length) {
+                // Tüm sorular tamamlandı, başa dön
+                currentRepeatIndex = 0;
+            }
+            
+            const currentQ = repeatQuestions[currentRepeatIndex];
+            repeatQuestion.textContent = currentQ.question;
+            repeatTranslation.textContent = currentQ.translation;
+            repeatAnswer.textContent = currentQ.answer;
+            
+            // Çeviri ve cevabı gizle
+            repeatTranslation.classList.remove('show');
+            repeatAnswer.classList.remove('show');
+            repeatToggleTranslation.textContent = 'Türkçe Anlamını Göster';
+            repeatToggleAnswer.textContent = 'Cevabı Göster';
+            
+            // İlerleme çubuğunu güncelle
+            repeatCurrentQuestion.textContent = `${currentRepeatIndex + 1}/${repeatQuestions.length}`;
+            repeatProgressFill.style.width = `${(currentRepeatIndex / repeatQuestions.length) * 100}%`;
+            
+            // Önceki soru butonunu kontrol et
+            if (currentRepeatIndex > 0) {
+                prevRepeatQuestion.classList.remove('hidden');
+            } else {
+                prevRepeatQuestion.classList.add('hidden');
+            }
+        }
+        
+        repeatToggleTranslation.addEventListener('click', () => {
+            repeatTranslation.classList.toggle('show');
+            repeatToggleTranslation.textContent = repeatTranslation.classList.contains('show') 
+                ? 'Türkçe Anlamını Gizle' 
+                : 'Türkçe Anlamını Göster';
+        });
+        
+        repeatToggleAnswer.addEventListener('click', () => {
+            repeatAnswer.classList.toggle('show');
+            repeatToggleAnswer.textContent = repeatAnswer.classList.contains('show') 
+                ? 'Cevabı Gizle' 
+                : 'Cevabı Göster';
+        });
+        
+        prevRepeatQuestion.addEventListener('click', () => {
+            if (currentRepeatIndex > 0) {
+                currentRepeatIndex--;
+                loadRepeatQuestion();
+            }
+        });
+        
+        nextRepeatQuestion.addEventListener('click', () => {
+            currentRepeatIndex++;
+            loadRepeatQuestion();
+        });
+        
+        // Sınav modunu başlat
+        function startExam() {
+            // Soruları karıştır
+            examQuestions = [...questions].sort(() => Math.random() - 0.5);
+            
+            // Kullanıcı 16'dan az soru eklediyse, tüm soruları kullan
+            const questionCount = Math.min(examQuestions.length, 16);
+            examQuestions = examQuestions.slice(0, questionCount);
+            
+            currentExamIndex = 0;
+            examScore = 0;
+            score.textContent = `Skor: ${examScore}`;
+            currentQuestion.textContent = `1/${examQuestions.length}`;
+            progressFill.style.width = '0%';
+            nextQuestion.classList.add('hidden');
+            examResult.classList.add('hidden');
+            
+            loadExamQuestion();
+        }
+        
+        function loadExamQuestion() {
+            if (currentExamIndex >= examQuestions.length) {
+                endExam();
+                return;
+            }
+            
+            const currentQ = examQuestions[currentExamIndex];
+            examQuestion.textContent = currentQ.question;
+            examTranslation.textContent = currentQ.translation;
+            examTranslation.classList.remove('show');
+            examToggleTranslation.textContent = 'Türkçe Anlamını Göster';
+            
+            // Yanlış cevapları oluştur
+            const wrongAnswers = questions
+                .filter(q => q.answer !== currentQ.answer)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3)
+                .map(q => q.answer);
+            
+            // Tüm seçenekleri birleştir ve karıştır
+            const allOptions = [currentQ.answer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+            
+            // Seçenekleri oluştur
+            examOptions.innerHTML = '';
+            allOptions.forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(optionElement, option, currentQ.answer));
+                examOptions.appendChild(optionElement);
+            });
+            
+            currentQuestion.textContent = `${currentExamIndex + 1}/${examQuestions.length}`;
+            progressFill.style.width = `${(currentExamIndex / examQuestions.length) * 100}%`;
+        }
+        
+        function selectOption(optionElement, selectedAnswer, correctAnswer) {
+            // Tüm seçenekleri devre dışı bırak
+            const allOptions = document.querySelectorAll('.option');
+            allOptions.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            // Doğru cevabı bul ve vurgula
+            allOptions.forEach(opt => {
+                if (opt.textContent === correctAnswer) {
+                    opt.classList.add('correct');
+                }
+            });
+            
+            // Seçilen cevabı kontrol et
+            if (selectedAnswer === correctAnswer) {
+                optionElement.classList.add('correct');
+                examScore++;
+                score.textContent = `Skor: ${examScore}`;
+            } else {
+                optionElement.classList.add('incorrect');
+            }
+            
+            nextQuestion.classList.remove('hidden');
+        }
+        
+        examToggleTranslation.addEventListener('click', () => {
+            examTranslation.classList.toggle('show');
+            examToggleTranslation.textContent = examTranslation.classList.contains('show') 
+                ? 'Türkçe Anlamını Gizle' 
+                : 'Türkçe Anlamını Göster';
+        });
+        
+        nextQuestion.addEventListener('click', () => {
+            currentExamIndex++;
+            loadExamQuestion();
+        });
+        
+        function endExam() {
+            examResult.classList.remove('hidden');
+            examResult.textContent = `Sınav Tamamlandı! Skorunuz: ${examScore}/${examQuestions.length}`;
+            examQuestion.textContent = '';
+            examTranslation.textContent = '';
+            examOptions.innerHTML = '';
+            nextQuestion.classList.add('hidden');
+            examToggleTranslation.classList.add('hidden');
+            progressFill.style.width = '100%';
+        }
+        
+        // Oyun modunu başlat
+        function startGame() {
+            // Soruları karıştır
+            gameQuestions = [...questions].sort(() => Math.random() - 0.5);
+            
+            // Kullanıcı 16'dan az soru eklediyse, tüm soruları kullan
+            const questionCount = Math.min(gameQuestions.length, 16);
+            gameQuestions = gameQuestions.slice(0, questionCount);
+            
+            currentGameIndex = 0;
+            gameCurrentQuestion.textContent = `1/${gameQuestions.length}`;
+            gameProgressFill.style.width = '0%';
+            checkAnswer.classList.remove('hidden');
+            nextGameQuestion.classList.add('hidden');
+            gameResult.classList.add('hidden');
+            userAnswer.value = '';
+            
+            loadGameQuestion();
+        }
+        
+        function loadGameQuestion() {
+            if (currentGameIndex >= gameQuestions.length) {
+                endGame();
+                return;
+            }
+            
+            const currentQ = gameQuestions[currentGameIndex];
+            gameQuestion.textContent = currentQ.question;
+            gameTranslation.textContent = currentQ.translation;
+            gameTranslation.classList.remove('show');
+            gameToggleTranslation.textContent = 'Türkçe Anlamını Göster';
+            
+            gameCurrentQuestion.textContent = `${currentGameIndex + 1}/${gameQuestions.length}`;
+            gameProgressFill.style.width = `${(currentGameIndex / gameQuestions.length) * 100}%`;
+            
+            userAnswer.value = '';
+            userAnswer.focus();
+        }
+        
+        gameToggleTranslation.addEventListener('click', () => {
+            gameTranslation.classList.toggle('show');
+            gameToggleTranslation.textContent = gameTranslation.classList.contains('show') 
+                ? 'Türkçe Anlamını Gizle' 
+                : 'Türkçe Anlamını Göster';
+        });
+        
+        checkAnswer.addEventListener('click', () => {
+            const currentQ = gameQuestions[currentGameIndex];
+            const userResponse = userAnswer.value.trim();
+            
+            // Basit bir doğrulama - gerçek uygulamada daha karmaşık bir karşılaştırma gerekebilir
+            if (userResponse.toLowerCase() === currentQ.answer.toLowerCase()) {
+                alert('Doğru!');
+            } else {
+                alert(`Yanlış! Doğru cevap: ${currentQ.answer}`);
+            }
+            
+            checkAnswer.classList.add('hidden');
+            nextGameQuestion.classList.remove('hidden');
+        });
+        
+        nextGameQuestion.addEventListener('click', () => {
+            currentGameIndex++;
+            checkAnswer.classList.remove('hidden');
+            nextGameQuestion.classList.add('hidden');
+            loadGameQuestion();
+        });
+        
+        function endGame() {
+            gameResult.classList.remove('hidden');
+            gameResult.textContent = 'Oyun Tamamlandı!';
+            gameQuestion.textContent = '';
+            gameTranslation.textContent = '';
+            userAnswer.value = '';
+            checkAnswer.classList.add('hidden');
+            nextGameQuestion.classList.add('hidden');
+            gameToggleTranslation.classList.add('hidden');
+            gameProgressFill.style.width = '100%';
+        }
+        
+        // Soru ayrıştırma ve ekleme
+        parseQuestions.addEventListener('click', () => {
+            const bulkText = bulkQuestions.value.trim();
+            
+            if (!bulkText) {
+                showMessage('Lütfen soru girin!', 'red');
+                return;
+            }
+            
+            const newQuestions = parseBulkQuestions(bulkText);
+            
+            if (newQuestions.length === 0) {
+                showMessage('Geçerli soru bulunamadı! Lütfen formatı kontrol edin.', 'red');
+                return;
+            }
+            
+            // Yeni soruları ekle
+            questions.push(...newQuestions);
+            
+            showMessage(`${newQuestions.length} yeni soru başarıyla eklendi! Toplam soru: ${questions.length}`, 'green');
+            
+            // Formu temizle
+            bulkQuestions.value = '';
+            
+            // Çalışma modunu güncelle
+            if (currentMode === 'study') {
+                loadStudyMode();
+            }
+        });
+        
+        // Toplu soru ayrıştırma
+        function parseBulkQuestions(text) {
+            const lines = text.split('\n');
+            const newQuestions = [];
+            
+            for (let line of lines) {
+                line = line.trim();
+                
+                // Boş satırları atla
+                if (!line) continue;
+                
+                // Satırı ayrıştır (numara-soru? cevap formatında)
+                const match = line.match(/^(\d+)[-\.]?\s*(.+?)\s*\?\s*(.+)$/);
+                
+                if (match) {
+                    const question = match[2].trim() + '?';
+                    const answer = match[3].trim();
+                    
+                    // Türkçe çeviriyi otomatik oluştur (basit bir yaklaşım)
+                    const translation = generateTranslation(question, answer);
+                    
+                    newQuestions.push({
+                        question: question,
+                        answer: answer,
+                        translation: translation
+                    });
+                }
+            }
+            
+            return newQuestions;
+        }
+        
+        // Basit bir çeviri oluşturma (gerçek uygulamada daha gelişmiş bir yöntem gerekir)
+        function generateTranslation(question, answer) {
+            // Basit çeviri eşleştirmeleri
+            const translations = {
+                "Wie viel kosten": "Ne kadar",
+                "Wie viel kostet": "Ne kadar",
+                "Was isst du": "Ne yersin",
+                "Was ist das": "Bu nedir",
+                "Was isst du gerne": "Ne yemeyi seversin",
+                "Was trinkst du gerne": "Ne içmeyi seversin",
+                "Was ist dein Lieblingsessen": "En sevdiğin yemek nedir",
+                "Was ist dein Lieblingsgetränk": "En sevdiğin içecek nedir",
+                "Was magst du essen": "Ne yemeyi seversin",
+                "Isst du gerne": "Sever misin",
+                "Was magst du nicht": "Neyi sevmezsin",
+                "Was brauchst du": "Neye ihtiyacın var",
+                "Was magst du": "Neyi seversin",
+                "Was trinkst du": "Ne içersin"
+            };
+            
+            let translatedQuestion = question;
+            let translatedAnswer = answer;
+            
+            // Soruyu çevir
+            for (const [de, tr] of Object.entries(translations)) {
+                if (question.includes(de)) {
+                    translatedQuestion = question.replace(de, tr);
+                    break;
+                }
+            }
+            
+            // Cevabı çevir
+            const answerTranslations = {
+                "Ich esse": "Yerim",
+                "Ich trinke": "İçerim",
+                "Ich mag": "Severim",
+                "Ich brauche": "İhtiyacım var",
+                "Ja": "Evet",
+                "Nein": "Hayır",
+                "ein Kilo": "bir kilo",
+                "eine Scheibe": "bir dilim",
+                "eine Tasse": "bir fincan",
+                "ein Glas": "bir bardak"
+            };
+            
+            for (const [de, tr] of Object.entries(answerTranslations)) {
+                if (answer.includes(de)) {
+                    translatedAnswer = answer.replace(de, tr);
+                    // Tüm eşleşmeleri değiştir
+                    translatedAnswer = translatedAnswer.replace(new RegExp(de, 'g'), tr);
+                }
+            }
+            
+            return `${translatedQuestion} ${translatedAnswer}`;
+        }
+        
+        // Tüm soruları temizle
+        clearQuestions.addEventListener('click', () => {
+            if (confirm('Tüm soruları temizlemek istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
+                questions = [];
+                showMessage('Tüm sorular temizlendi!', 'green');
+                
+                // Çalışma modunu güncelle
+                if (currentMode === 'study') {
+                    loadStudyMode();
+                }
+            }
+        });
+        
+        // Mesaj gösterme
+        function showMessage(message, color) {
+            saveMessage.textContent = message;
+            saveMessage.style.color = color;
+            
+            // 3 saniye sonra mesajı temizle
+            setTimeout(() => {
+                saveMessage.textContent = '';
+            }, 3000);
+        }
+        
+        // Sayfa yüklendiğinde çalışma modunu yükle
+        window.onload = () => {
+            loadStudyMode();
+        };
+    </script>
+</body>
+</html>
